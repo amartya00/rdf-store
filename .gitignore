@@ -1,0 +1,8 @@
+build/
+_build/
+html/
+latex/
+.idea/
+.kdev4/
+*.kdev4
+.DS_Store
