@@ -144,9 +144,11 @@ namespace rdfstore {
             FAILURE_TO_INSERT_PRED,
             FAILURE_TO_INSERT_OBJECT,
             FAILURE_TO_INSERT_TRIPLE,
-            FAILURE_TO_INSERT_BACK_EDGE,
-
             UNDER_SPECIFIED_QUERY_FILTER,
+
+            TRIPLE_NOT_FOUND,
+            SUBJECT_NOT_FOUND,
+            OBJECT_NOT_FOUND
         };
 
         /**

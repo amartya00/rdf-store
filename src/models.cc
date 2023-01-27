@@ -24,6 +24,7 @@ namespace rdfstore {
 
         bool operator==(const Predicate& left, const Predicate& right) {
             return left.iri == right.iri;
+        }
 
     }
 }

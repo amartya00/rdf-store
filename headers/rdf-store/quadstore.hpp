@@ -14,7 +14,7 @@ namespace rdfstore {
 
         class QuadStore {
         private:
-            thesoup::types::IndexedPropertyDiGraph<rdfstore::models::Node, rdfstore::models::> graph {};
+            thesoup::types::IndexedPropertyDiGraph<rdfstore::models::Node, rdfstore::models::Predicate> graph {};
 
         public:
             thesoup::types::Result<rdfstore::models::Triple, rdfstore::models::Error<thesoup::types::IndexedPropertyDiGraphAttributes::ErrorCode>>
@@ -31,12 +31,13 @@ namespace rdfstore {
 }
 
 namespace std {
-    template <> struct hash<thesoup::types::Edge> {
-        std::size_t operator()(const rdfstore::quadstore::_PredEdge& pred) {
+
+    template <> struct hash<rdfstore::models::Predicate> {
+        std::size_t operator()(const rdfstore::models::Predicate& pred) {
             constexpr std::size_t true_hash {0x9e3779b9};
             constexpr std::size_t false_hash {~true_hash};
-            std::size_t str_hash{std::hash<std::string>()(pred.pred.iri.iri)};
-            return pred.backwards? (str_hash << 6) + true_hash + (str_hash >> 2) : (str_hash << 6) + false_hash + (str_hash >> 2);
+            std::size_t str_hash{std::hash<std::string>()(pred.iri.iri)};
+            return (str_hash << 6) + false_hash + (str_hash >> 2);
         }
     };
 }
