@@ -28,6 +28,7 @@ SCENARIO("RDF store insertions.") {
             Predicate has_id {IRITerm {has_id_iri}};
             //Node emp001_id {LiteralTerm {}};
             REQUIRE(emp001_iri == has_id.iri.iri);
+            REQUIRE(false);
         }
     }
 }
