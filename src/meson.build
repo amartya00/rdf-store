@@ -1,6 +1,14 @@
 sources = [
     'models.cc',
     'quadstore.cc',
+    'utils.cc',
     'main.cc'
 ]
-main = executable('rdf-store', sources, include_directories : inc)
+
+rdfstore = library(
+    'rdfstore',
+    sources,
+    include_directories: [inc],
+    dependencies: [soup],
+    install: true
+)

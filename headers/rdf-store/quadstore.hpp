@@ -36,7 +36,7 @@ namespace std {
         std::size_t operator()(const rdfstore::models::Predicate& pred) {
             constexpr std::size_t true_hash {0x9e3779b9};
             constexpr std::size_t false_hash {~true_hash};
-            std::size_t str_hash{std::hash<std::string>()(pred.iri.iri)};
+            std::size_t str_hash{std::hash<std::string_view>()(pred.iri.iri)};
             return (str_hash << 6) + false_hash + (str_hash >> 2);
         }
     };

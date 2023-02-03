@@ -21,6 +21,18 @@ namespace rdfstore {
      * */
     namespace models {
         /**
+         * \brief The enum representing a node type.
+         *
+         * This enum represents a node type. This will used in the rdfstore::models::Node class in conjunction with a
+         * variant to save the appropriate data.
+         */
+        enum class NodeType {
+            IRI,
+            LITERAL,
+            BLANK
+        };
+
+        /**
          * \brief A literal node
          *
          * A structure representing a literal RDF node. The description can be found here: https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-Graph-Literal
@@ -32,7 +44,7 @@ namespace rdfstore {
          *     mapping will me maintained elsewhere. If you are using this struct in isolation, please make sure to create a
          *     datatype -> ID mapping.
          */
-        struct LiteralNode {
+        struct LiteralTerm {
             std::vector<std::byte> bytes; /**< The byte vector containing the raw data. */
             std::size_t datatype_iri_id; /**< The ID of the datatype IRI. */
         };
@@ -48,8 +60,8 @@ namespace rdfstore {
          * conversions.
          *
          */
-        struct IRINode {
-            std::string iri; /**< The ASCII encoded IRI. */
+        struct IRITerm {
+            std::string_view iri; /**< The ASCII encoded IRI. */
         };
 
         /**
@@ -57,30 +69,23 @@ namespace rdfstore {
          *
          * This structure represents a blank node. Detailed description here: https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-blank-nodes
          */
-        struct BlankNode {};
-
-        /**
-         * \brief The enum representing a node type.
-         *
-         * This enum represents a node type. This will used in the rdfstore::models::Node class in conjunction with a
-         * variant to save the appropriate data.
-         */
-        enum class NodeType {
-            IRI,
-            LITERAL,
-            BLANK
-        };
+        struct BlankTerm {};
 
         /**
          * \brief A RDF node class
          *
          * A RDF node is a component of a RDF graph. For a description of what it means, please see the specification here:
          * https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-triples .
+         *
+         * There is a utility static function provided to generate a new Node, without having to worry about providing the
+         * node type. This is slightly useful, but worth having.
+         *
          */
         struct Node {
             NodeType type;
-            std::variant<BlankNode, LiteralNode, IRINode> term; /**< The data; can be blank, IRI or literal. */
+            std::variant<BlankTerm, LiteralTerm, IRITerm> term; /**< The data; can be blank, IRI or literal. */
 
+            template <typename T> static Node init(const T& term) noexcept;
         };
 
         /**
@@ -93,7 +98,7 @@ namespace rdfstore {
          * can only be an IRI type, so that is the only member here.
          */
         struct Predicate {
-           IRINode iri;
+           IRITerm iri;
         };
 
         //!\cond NO_DOC
@@ -165,9 +170,9 @@ namespace rdfstore {
         };
 
         //!\cond NO_DOC
-        bool operator==(const LiteralNode& left, const LiteralNode& right);
-        bool operator==(const IRINode& left, const IRINode& right);
-        bool operator==(const BlankNode& _left, const BlankNode& _right);
+        bool operator==(const LiteralTerm& left, const LiteralTerm& right);
+        bool operator==(const IRITerm& left, const IRITerm& right);
+        bool operator==(const BlankTerm& _left, const BlankTerm& _right);
         bool operator==(const Node& left, const Node& right);
         bool operator==(const Predicate& left, const Predicate& right);
         //!\endcond
@@ -179,11 +184,11 @@ namespace std {
     template<> struct hash<rdfstore::models::Node> {
         std::size_t operator()(const rdfstore::models::Node& node) {
             if (node.type == rdfstore::models::NodeType::IRI) {
-                const rdfstore::models::IRINode& iri{std::get<rdfstore::models::IRINode>(node.term)};
-                const auto hash_value{std::hash<std::string>()(iri.iri)};
+                const rdfstore::models::IRITerm& iri {std::get<rdfstore::models::IRITerm>(node.term)};
+                const auto hash_value{std::hash<std::string_view>()(iri.iri)};
                 return hash_value == 0 ? 1 : hash_value;
             } else if (node.type == rdfstore::models::NodeType::LITERAL) {
-                const rdfstore::models::LiteralNode& literal {std::get<rdfstore::models::LiteralNode>(node.term)};
+                const rdfstore::models::LiteralTerm& literal {std::get<rdfstore::models::LiteralTerm>(node.term)};
                 std::size_t acc_hash {std::hash<std::byte>()(literal.bytes[0])};
                 for (std::size_t i = 1; i < literal.bytes.size(); i++) {
                     std::size_t tmp_hash {std::hash<std::byte>()(literal.bytes[i])};
