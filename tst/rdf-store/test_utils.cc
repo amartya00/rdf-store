@@ -2,13 +2,14 @@
 
 #include <catch2/catch_all.hpp>
 #include <rdf-store/utils.hpp>
-#include <unordered_map>
 
-#include <iostream>
+using rdfstore::models::LiteralTerm;
+using rdfstore::utils::LiteralGenerator;
 
 using rdfstore::utils::get_literal_datatype_iri_id;
 using rdfstore::utils::LiteralGenerator;
 using rdfstore::models::LiteralTerm;
+
 
 template <>
 std::size_t rdfstore::utils::get_literal_datatype_iri_id<int>() {
@@ -39,6 +40,7 @@ std::size_t rdfstore::utils::get_literal_datatype_iri_id<double>() {
     return 6;
 }
 
+
 SCENARIO("Literal generator test for Integer.") {
 
     GIVEN("I try to convert an integer to a literal.") {
@@ -60,6 +62,7 @@ SCENARIO("Literal generator test for Integer.") {
         }
     }
 }
+
 
 SCENARIO("Literal generator test for Long Integer.") {
 
@@ -97,9 +100,9 @@ SCENARIO("Literal generator test for Float.") {
 
                 THEN("I should get back the original value.") {
 
+                    auto res {LiteralGenerator<float>::deserialize(term)};
                     float xx {LiteralGenerator<float>::deserialize(term).unwrap()};
-                    std::cout << "-----------------------------" << xx << "\n";
-                    REQUIRE(false);
+                    REQUIRE(x == xx);
                 }
             }
         }

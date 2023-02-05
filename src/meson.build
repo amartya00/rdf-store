@@ -2,7 +2,6 @@ sources = [
     'models.cc',
     'quadstore.cc',
     'utils.cc',
-    'main.cc'
 ]
 
 rdfstore = library(

@@ -3,6 +3,8 @@
 #include <thesoup/types/types.hpp>
 #include <rdf-store/models.hpp>
 
+#include <iostream>
+
 /**
  * \namespace rdfstore
  *
@@ -32,7 +34,8 @@ namespace rdfstore {
         struct LiteralGenerator<T, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
             static rdfstore::models::LiteralTerm serialize(const T& term) {
                 constexpr std::size_t num_bytes {sizeof(T)};
-                std::vector<std::byte> bytes {num_bytes};
+                std::vector<std::byte> bytes {};
+                bytes.reserve(num_bytes);
 
                 const std::byte* start {reinterpret_cast<const std::byte*>(&term)};
                 const std::byte* end {start + num_bytes};
@@ -47,7 +50,6 @@ namespace rdfstore {
                         bytes.push_back(*it);
                     }
                 }
-
                 return rdfstore::models::LiteralTerm {
                         .bytes = bytes,
                         .datatype_iri_id = get_literal_datatype_iri_id<T>()
