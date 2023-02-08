@@ -40,7 +40,6 @@ SCENARIO("RDF store insertions.") {
             REQUIRE(has_id_iri == has_id.iri.iri);
             REQUIRE(emp001_iri == std::get<IRITerm>(emp001.term).iri);
             REQUIRE(100UL == LiteralGenerator<unsigned long>::deserialize(std::get<LiteralTerm>(emp001_id.term)).unwrap());
-
         }
     }
 }
