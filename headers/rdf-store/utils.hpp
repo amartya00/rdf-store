@@ -32,7 +32,8 @@ namespace rdfstore {
         };
 
         template <typename T>
-        struct LiteralGenerator<T, typename std::enable_if<std::is_arithmetic<T>::value>::type> {
+        struct LiteralGenerator<T, typename std::enable_if<std::is_scalar<T>::value>::type> {
+            static_assert(std::endian::native == std::endian::little, "This will not work on Big Endian architecture.");
             static rdfstore::models::LiteralTerm serialize(const T& term) {
                 constexpr std::size_t num_bytes {sizeof(T)};
                 std::vector<std::byte> bytes {};
@@ -40,17 +41,12 @@ namespace rdfstore {
 
                 const std::byte* start {reinterpret_cast<const std::byte*>(&term)};
                 const std::byte* end {start + num_bytes};
-                if constexpr (std::endian::native == std::endian::little) {
-                    // Little endian: The MSB will be at the highest address
-                    for (auto it = start; it < end; it++) {
-                        bytes.push_back(*it);
-                    }
-                } else {
-                    // Big endian: MSB will be at lowest address
-                    for (auto it = end-1; it >= start; it--) {
-                        bytes.push_back(*it);
-                    }
+
+                // Little endian: The MSB will be at the highest address
+                for (auto it = start; it < end; it++) {
+                    bytes.push_back(*it);
                 }
+
                 return rdfstore::models::LiteralTerm {
                         .bytes = bytes,
                         .datatype_iri_id = get_literal_datatype_iri_id<T>()
@@ -66,6 +62,7 @@ namespace rdfstore {
                 } else {
                     const T* it {reinterpret_cast<const T*>(&term.bytes[0])};
                     return thesoup::types::Result<T, ErrorCode>::success(*it);
+
                 }
             }
         };

@@ -45,8 +45,8 @@ namespace rdfstore {
          *     datatype -> ID mapping.
          */
         struct LiteralTerm {
-            std::vector<std::byte> bytes; /**< The byte vector containing the raw data. */
-            std::size_t datatype_iri_id; /**< The ID of the datatype IRI. */
+            const std::vector<std::byte> bytes; /**< The byte vector containing the raw data. */
+            const std::size_t datatype_iri_id; /**< The ID of the datatype IRI. */
         };
 
         /**
