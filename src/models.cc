@@ -52,5 +52,11 @@ namespace rdfstore {
         bool operator==(const Predicate& left, const Predicate& right) {
             return left.iri == right.iri;
         }
+
+        bool operator==(const Triple& left, const Triple& right) {
+            return left.namespace_id == right.namespace_id &&
+                left.sub_id ==
+
+        }
     }
 }
